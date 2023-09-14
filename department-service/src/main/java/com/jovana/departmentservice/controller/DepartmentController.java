@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/department")
+@RequestMapping("/api/departments")
 @RequiredArgsConstructor
 public class DepartmentController {
     private final DepartmentService departmentService;
@@ -16,5 +16,10 @@ public class DepartmentController {
     @ResponseStatus(HttpStatus.CREATED)
     public DepartmentDto saveDepartment(@RequestBody DepartmentDto departmentDto){
         return departmentService.saveDepartment(departmentDto);
+    }
+    
+    @GetMapping("/code/{code}")
+    public DepartmentDto getDepartmentByCode(@PathVariable String code){
+        return departmentService.getDepartmentByCode(code);
     }
 }
