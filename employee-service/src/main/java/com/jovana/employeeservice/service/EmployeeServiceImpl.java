@@ -9,9 +9,8 @@ import com.jovana.employeeservice.exception.ResourceNotFoundException;
 import com.jovana.employeeservice.mapper.EmployeeMapper;
 import com.jovana.employeeservice.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
 
@@ -20,7 +19,8 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
-    private final RestTemplate restTemplate;
+    // private final RestTemplate restTemplate;
+    private final WebClient webClient;
     @Override
     public EmployeeDto saveEmployee (EmployeeDto employeeDto) {
         Optional<Employee> employee =
@@ -38,10 +38,16 @@ public class EmployeeServiceImpl implements EmployeeService {
                                               .orElseThrow(() -> new ResourceNotFoundException("Employee",
                                                                                                "id",
                                                                                                id.toString()));
-        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity(
+      /*  ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity(
                 "http://localhost:8000/api/departments/code/" + employee.getDepartmentCode(),
                 DepartmentDto.class);
-        DepartmentDto departmentDto = responseEntity.getBody();
+        DepartmentDto departmentDto = responseEntity.getBody();*/
+        DepartmentDto departmentDto = webClient.get()
+                                               .uri("http://localhost:8000/api/departments/code/" + employee.getDepartmentCode())
+                                               .retrieve()
+                                               .bodyToMono(DepartmentDto.class)
+                                               .block();
+        
         EmployeeDto employeeDto = employeeMapper.employeeToEmployeeDto(employee);
         return APIResponseDto.builder()
                              .employeeDto(employeeDto)
