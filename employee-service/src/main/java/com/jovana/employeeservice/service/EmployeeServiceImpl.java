@@ -1,5 +1,7 @@
 package com.jovana.employeeservice.service;
 
+import com.jovana.employeeservice.dto.APIResponseDto;
+import com.jovana.employeeservice.dto.DepartmentDto;
 import com.jovana.employeeservice.dto.EmployeeDto;
 import com.jovana.employeeservice.entity.Employee;
 import com.jovana.employeeservice.exception.EmployeeAlreadyExistsException;
@@ -7,7 +9,9 @@ import com.jovana.employeeservice.exception.ResourceNotFoundException;
 import com.jovana.employeeservice.mapper.EmployeeMapper;
 import com.jovana.employeeservice.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -16,6 +20,7 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
+    private final RestTemplate restTemplate;
     @Override
     public EmployeeDto saveEmployee (EmployeeDto employeeDto) {
         Optional<Employee> employee =
@@ -28,11 +33,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
     
     @Override
-    public EmployeeDto getEmployeeById (Long id) {
+    public APIResponseDto getEmployeeById (Long id) {
         Employee employee = employeeRepository.findById(id)
                                               .orElseThrow(() -> new ResourceNotFoundException("Employee",
                                                                                                "id",
                                                                                                id.toString()));
-        return employeeMapper.employeeToEmployeeDto(employee);
+        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity(
+                "http://localhost:8000/api/departments/code/" + employee.getDepartmentCode(),
+                DepartmentDto.class);
+        DepartmentDto departmentDto = responseEntity.getBody();
+        EmployeeDto employeeDto = employeeMapper.employeeToEmployeeDto(employee);
+        return APIResponseDto.builder()
+                             .employeeDto(employeeDto)
+                             .departmentDto(departmentDto)
+                             .build();
     }
 }

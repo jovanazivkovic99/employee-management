@@ -1,5 +1,6 @@
 package com.jovana.employeeservice.controller;
 
+import com.jovana.employeeservice.dto.APIResponseDto;
 import com.jovana.employeeservice.dto.EmployeeDto;
 import com.jovana.employeeservice.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class EmployeeController {
     }
     
     @GetMapping("/{id}")
-    public EmployeeDto getEmployeeById (@PathVariable Long id) {
+    public APIResponseDto getEmployeeById (@PathVariable Long id) {
         return employeeService.getEmployeeById(id);
     }
 }
