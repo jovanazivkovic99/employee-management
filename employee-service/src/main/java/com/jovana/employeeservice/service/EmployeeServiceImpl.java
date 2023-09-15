@@ -20,7 +20,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
     // private final RestTemplate restTemplate;
-    private final WebClient webClient;
+    //private final WebClient webClient;
+    private final APIClient apiClient;
     @Override
     public EmployeeDto saveEmployee (EmployeeDto employeeDto) {
         Optional<Employee> employee =
@@ -42,11 +43,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                 "http://localhost:8000/api/departments/code/" + employee.getDepartmentCode(),
                 DepartmentDto.class);
         DepartmentDto departmentDto = responseEntity.getBody();*/
-        DepartmentDto departmentDto = webClient.get()
+        /*DepartmentDto departmentDto = webClient.get()
                                                .uri("http://localhost:8000/api/departments/code/" + employee.getDepartmentCode())
                                                .retrieve()
                                                .bodyToMono(DepartmentDto.class)
-                                               .block();
+                                               .block();*/
+        DepartmentDto departmentDto = apiClient.getDepartmentByCode(employee.getDepartmentCode());
         
         EmployeeDto employeeDto = employeeMapper.employeeToEmployeeDto(employee);
         return APIResponseDto.builder()
