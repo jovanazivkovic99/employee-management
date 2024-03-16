@@ -1,4 +1,4 @@
-# Netflix Eureca - Mikroservisna Aplikacija za Upravljanje Zaposlenima i Odeljenjima
+# Netflix Eureka - Mikroservisna Aplikacija za Upravljanje Zaposlenima i Odeljenjima
 
 Spring Boot, Spring Cloud Netflix Eureka za servisni registar i Kafku za asinhronu komunikaciju između servisa.
 
